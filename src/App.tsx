@@ -125,6 +125,7 @@ function App() {
   }, [selectedYear]);
 
   const monthOptions = useMemo(() => createMonthOptions(selectedMonth, 9), [selectedMonth]);
+  const settingsMonthOptions = useMemo(() => createMonthOptions(getTodayMonthKey(), 2), []);
 
   useEffect(() => {
     if (!message && !error) {
@@ -143,11 +144,22 @@ function App() {
     <div className="min-h-screen px-4 pb-4 pt-5 text-ink">
       <div className="mx-auto flex min-h-[calc(100vh-2rem)] max-w-[430px] flex-col">
         <header className="mb-5 flex justify-center">
-          <div className="inline-flex max-w-full flex-col items-center rounded-[28px] border border-white/70 bg-white/70 px-5 py-4 text-center shadow-soft backdrop-blur">
-            <div className="mt-3 flex items-end justify-center gap-2">
-              <span className="mb-1 rounded-full bg-brand-100 px-2 py-1 text-[27px] font-bold tracking-[0.18em] text-brand-700">
-                유빈 디자이너 목표 🐻
-              </span>
+          <div className="relative w-full overflow-hidden rounded-[32px] border border-white/80 bg-white/75 px-6 py-5 text-center shadow-soft backdrop-blur">
+            <div className="absolute -left-6 top-0 h-20 w-20 rounded-full bg-brand-100/80 blur-2xl" />
+            <div className="absolute -right-6 bottom-0 h-20 w-20 rounded-full bg-amber-200/70 blur-2xl" />
+
+            <div className="relative">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.34em] text-brand-700/70">
+                Yubin Designer
+              </p>
+              <div className="mt-2 flex items-end justify-center gap-2">
+                <span className="rounded-full bg-gradient-to-r from-brand-600 to-amber-400 px-4 py-1 text-[28px] font-black tracking-[-0.05em] text-white shadow-lg shadow-orange-200/60">
+                  유빈 목표
+                </span>
+              </div>
+              <p className="mt-2 text-xs font-medium tracking-[0.18em] text-stone-500">
+                HAIR SALES MANAGER
+              </p>
             </div>
           </div>
         </header>
@@ -245,7 +257,7 @@ function App() {
             <SettingsPage
               monthKey={selectedMonth}
               onChangeMonth={setSelectedMonth}
-              monthOptions={monthOptions}
+              monthOptions={settingsMonthOptions}
               onSaveGoal={async (monthKey, amount) => {
                 try {
                   await saveGoalToApi(monthKey, amount);

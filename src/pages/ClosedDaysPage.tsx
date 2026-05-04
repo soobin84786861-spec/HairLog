@@ -78,7 +78,10 @@ export function ClosedDaysPage({
             const isTuesday = date.getDay() === 2;
             const isExtra = extraClosedDays.has(dateKey);
             const closed = isClosedDay(data, dateKey);
-            const saleExists = Boolean(data.sales[dateKey]);
+            const saleAmount = data.sales[dateKey]?.amount ?? 0;
+            const saleExists = saleAmount > 0;
+            const hasGoal = goal > 0;
+            const hitTarget = !closed && hasGoal && saleAmount >= dailyTarget;
 
             return (
               <button
@@ -92,11 +95,21 @@ export function ClosedDaysPage({
                   !isTuesday && !closed && "border-orange-100 bg-orange-50/50 text-ink",
                   isExtra && "border-rose-300 bg-rose text-rose-700",
                 )}
-              >
-                <div className="font-semibold">{date.getDate()}</div>
-                <div className="mt-1 text-[10px]">
-                  {isTuesday ? "화 휴무" : isExtra ? "추가 휴무" : saleExists ? "매출 있음" : "근무"}
-                </div>
+                >
+                  <div className="font-semibold">{date.getDate()}</div>
+                  <div className="mt-1 text-[10px]">
+                    {isTuesday
+                      ? "화 휴무"
+                      : isExtra
+                        ? "추가 휴무"
+                        : saleExists
+                          ? hasGoal
+                            ? hitTarget
+                              ? "😊"
+                              : "😭"
+                            : "✔️"
+                          : "근무"}
+                  </div>
               </button>
             );
           })}
