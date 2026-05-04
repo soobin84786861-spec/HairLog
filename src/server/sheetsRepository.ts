@@ -19,6 +19,11 @@ export interface ClosedDayRow {
 }
 
 async function withClient<T>(callback: (client: sheets_v4.Sheets, spreadsheetId: string) => Promise<T>) {
+  const client = await getSheetsClient();
+  return callback(client, getSheetId());
+}
+
+async function withWritableClient<T>(callback: (client: sheets_v4.Sheets, spreadsheetId: string) => Promise<T>) {
   await ensureSheetSetup();
   const client = await getSheetsClient();
   return callback(client, getSheetId());
@@ -72,7 +77,7 @@ async function deleteRowsByNumbers(client: sheets_v4.Sheets, spreadsheetId: stri
 }
 
 async function upsertRow(sheetName: string, key: string, values: string[]) {
-  return withClient(async (client, spreadsheetId) => {
+  return withWritableClient(async (client, spreadsheetId) => {
     const rows = await readRows(`${sheetName}!A2:Z`);
     const matchingIndexes = rows
       .map((row, index) => ({
@@ -113,7 +118,7 @@ async function upsertRow(sheetName: string, key: string, values: string[]) {
 }
 
 async function clearRow(sheetName: string, key: string, width: number) {
-  return withClient(async (client, spreadsheetId) => {
+  return withWritableClient(async (client, spreadsheetId) => {
     const rows = await readRows(`${sheetName}!A2:Z`);
     const matchingRowNumbers = rows
       .map((row, index) => ({
@@ -222,7 +227,7 @@ export async function upsertClosedDay(row: ClosedDayRow) {
 }
 
 export async function clearAllSheets() {
-  await withClient(async (client, spreadsheetId) => {
+  await withWritableClient(async (client, spreadsheetId) => {
     await client.spreadsheets.values.clear({
       spreadsheetId,
       range: `${SHEETS.sales.title}!A2:C`,
