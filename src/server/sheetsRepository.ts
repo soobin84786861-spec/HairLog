@@ -18,6 +18,15 @@ export interface ClosedDayRow {
   memo: string;
 }
 
+const READ_CACHE_TTL_MS = 30 * 1000;
+
+type CachedRows = {
+  expiresAt: number;
+  values: string[][];
+};
+
+const readCache = new Map<string, CachedRows>();
+
 async function withClient<T>(callback: (client: sheets_v4.Sheets, spreadsheetId: string) => Promise<T>) {
   const client = await getSheetsClient();
   return callback(client, getSheetId());
@@ -30,14 +39,33 @@ async function withWritableClient<T>(callback: (client: sheets_v4.Sheets, spread
 }
 
 async function readRows(range: string) {
+  const cached = readCache.get(range);
+  if (cached && cached.expiresAt > Date.now()) {
+    return cached.values;
+  }
+
   return withClient(async (client, spreadsheetId) => {
     const response = await client.spreadsheets.values.get({
       spreadsheetId,
       range,
     });
 
-    return response.data.values ?? [];
+    const values = (response.data.values ?? []) as string[][];
+    readCache.set(range, {
+      expiresAt: Date.now() + READ_CACHE_TTL_MS,
+      values,
+    });
+
+    return values;
   });
+}
+
+function invalidateSheetCache(sheetName: string) {
+  for (const key of readCache.keys()) {
+    if (key.startsWith(`${sheetName}!`)) {
+      readCache.delete(key);
+    }
+  }
 }
 
 function normalizeKey(value: string | undefined) {
@@ -102,6 +130,7 @@ async function upsertRow(sheetName: string, key: string, values: string[]) {
 
       const duplicateRowNumbers = matchingIndexes.slice(1).map((index) => index + 2);
       await deleteRowsByNumbers(client, spreadsheetId, sheetName, duplicateRowNumbers);
+      invalidateSheetCache(sheetName);
       return;
     }
 
@@ -114,6 +143,8 @@ async function upsertRow(sheetName: string, key: string, values: string[]) {
         values: [values],
       },
     });
+
+    invalidateSheetCache(sheetName);
   });
 }
 
@@ -139,6 +170,7 @@ async function clearRow(sheetName: string, key: string, width: number) {
       range: `${sheetName}!A${firstRowNumber}:${endColumn}${firstRowNumber}`,
     });
     await deleteRowsByNumbers(client, spreadsheetId, sheetName, duplicateRowNumbers);
+    invalidateSheetCache(sheetName);
   });
 }
 
@@ -240,5 +272,8 @@ export async function clearAllSheets() {
       spreadsheetId,
       range: `${SHEETS.closedDays.title}!A2:C`,
     });
+    invalidateSheetCache(SHEETS.sales.title);
+    invalidateSheetCache(SHEETS.goals.title);
+    invalidateSheetCache(SHEETS.closedDays.title);
   });
 }
