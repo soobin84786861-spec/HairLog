@@ -1,3 +1,3 @@
-import { goalsHandler } from "../src/server/handlers/goals";
+import { goalsHandler } from "../src/server/handlers/goals.js";
 
 export default goalsHandler;

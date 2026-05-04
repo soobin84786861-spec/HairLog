@@ -1,6 +1,6 @@
-import { ApiError, attachResponseHelpers, assertMethod, handleApiError, readJsonBody, requireMonthParam } from "../http";
-import { ApiRequest, ApiResponse } from "../types";
-import { listGoals, upsertGoal } from "../sheetsRepository";
+import { ApiError, attachResponseHelpers, assertMethod, handleApiError, readJsonBody, requireMonthParam } from "../http.js";
+import { ApiRequest, ApiResponse } from "../types.js";
+import { listGoals, upsertGoal } from "../sheetsRepository.js";
 
 interface GoalPayload {
   month: string;

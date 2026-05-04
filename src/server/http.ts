@@ -1,4 +1,4 @@
-import { ApiRequest, ApiResponse } from "./types";
+import { ApiRequest, ApiResponse } from "./types.js";
 
 export class ApiError extends Error {
   statusCode: number;
@@ -21,8 +21,14 @@ function sendJson(response: ApiResponse, statusCode: number, body: unknown) {
 }
 
 export function attachResponseHelpers(response: ApiResponse) {
-  response.status = (statusCode: number) => setStatus(response, statusCode);
-  response.json = (body: unknown) => sendJson(response, response.statusCode || 200, body);
+  if (typeof response.status !== "function") {
+    response.status = (statusCode: number) => setStatus(response, statusCode);
+  }
+
+  if (typeof response.json !== "function") {
+    response.json = (body: unknown) => sendJson(response, response.statusCode || 200, body);
+  }
+
   return response;
 }
 

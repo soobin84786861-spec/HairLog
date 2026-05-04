@@ -1,6 +1,6 @@
-import { ApiError, attachResponseHelpers, assertMethod, handleApiError, readJsonBody, requireDate, requireMonthParam } from "../http";
-import { ApiRequest, ApiResponse } from "../types";
-import { listClosedDays, upsertClosedDay } from "../sheetsRepository";
+import { ApiError, attachResponseHelpers, assertMethod, handleApiError, readJsonBody, requireDate, requireMonthParam } from "../http.js";
+import { ApiRequest, ApiResponse } from "../types.js";
+import { listClosedDays, upsertClosedDay } from "../sheetsRepository.js";
 
 interface ClosedDayPayload {
   date: string;

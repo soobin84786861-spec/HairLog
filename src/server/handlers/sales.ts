@@ -1,6 +1,6 @@
-import { ApiError, attachResponseHelpers, assertMethod, handleApiError, readJsonBody, requireDate, requireMonthParam } from "../http";
-import type { ApiRequest, ApiResponse } from "../types";
-import { listSales, upsertSale } from "../sheetsRepository";
+import { ApiError, attachResponseHelpers, assertMethod, handleApiError, readJsonBody, requireDate, requireMonthParam } from "../http.js";
+import type { ApiRequest, ApiResponse } from "../types.js";
+import { listSales, upsertSale } from "../sheetsRepository.js";
 
 interface SalesPayload {
   date: string;

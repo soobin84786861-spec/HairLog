@@ -1,5 +1,5 @@
 import { sheets_v4 } from "googleapis";
-import { ensureSheetSetup, getSheetId, getSheetsClient, getSpreadsheetMetadata, SHEETS } from "./sheetsClient";
+import { ensureSheetSetup, getSheetId, getSheetsClient, getSpreadsheetMetadata, SHEETS } from "./sheetsClient.js";
 
 export interface SalesRow {
   date: string;

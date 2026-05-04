@@ -1,3 +1,3 @@
-import { salesHandler } from "../src/server/handlers/sales";
+import { salesHandler } from "../src/server/handlers/sales.js";
 
 export default salesHandler;
