@@ -158,7 +158,7 @@ function App() {
                 </span>
               </div>
               <p className="mt-2 text-xs font-medium tracking-[0.18em] text-stone-500">
-                HAIR SALES MANAGER
+                화이팅 정유빈 아자아자
               </p>
             </div>
           </div>
