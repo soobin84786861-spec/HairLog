@@ -80,21 +80,6 @@ function App() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadInitialMonth = async () => {
-      try {
-        const monthData = await fetchMonthData(getTodayMonthKey());
-        setData((prev) => replaceMonthSlice(prev, getTodayMonthKey(), monthData));
-        setError(null);
-      } catch (loadError) {
-        console.error(loadError);
-        setError("Google Sheets 데이터를 불러오지 못했어요. 환경변수와 시트 공유 설정을 확인해 주세요.");
-      }
-    };
-
-    void loadInitialMonth();
-  }, []);
-
-  useEffect(() => {
     const loadMonth = async () => {
       try {
         const monthData = await fetchMonthData(selectedMonth);
@@ -110,6 +95,10 @@ function App() {
   }, [selectedMonth]);
 
   useEffect(() => {
+    if (activeTab !== "report") {
+      return;
+    }
+
     const loadYear = async () => {
       try {
         const yearData = await fetchYearData(selectedYear);
@@ -122,7 +111,7 @@ function App() {
     };
 
     void loadYear();
-  }, [selectedYear]);
+  }, [activeTab, selectedYear]);
 
   const monthOptions = useMemo(() => createMonthOptions(selectedMonth, 9), [selectedMonth]);
   const settingsMonthOptions = useMemo(() => createMonthOptions(getTodayMonthKey(), 2), []);
@@ -158,7 +147,7 @@ function App() {
                 </span>
               </div>
               <p className="mt-2 text-xs font-medium tracking-[0.18em] text-stone-500">
-                화이팅 정유빈 아자아자
+                매출을 가볍게 확인해요
               </p>
             </div>
           </div>
@@ -193,11 +182,11 @@ function App() {
                       },
                     },
                   }));
-                  setMessage("일 매출이 Google Sheets에 저장되었어요.");
+                  setMessage("일 매출이 Google Sheets에 저장됐어요.");
                   setError(null);
                 } catch (saveError) {
                   console.error(saveError);
-                  setError("일 매출 저장에 실패했어요.");
+                  setError("일 매출 저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
                 }
               }}
             />
@@ -232,11 +221,11 @@ function App() {
                     };
                   });
 
-                  setMessage("휴무일이 Google Sheets에 반영되었어요.");
+                  setMessage("휴무일이 Google Sheets에 반영됐어요.");
                   setError(null);
                 } catch (saveError) {
                   console.error(saveError);
-                  setError("휴무일 저장에 실패했어요.");
+                  setError("휴무일 저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
                 }
               }}
             />
@@ -275,11 +264,11 @@ function App() {
                       monthlyGoals: nextGoals,
                     };
                   });
-                  setMessage("월 목표 매출이 Google Sheets에 저장되었어요.");
+                  setMessage("월 목표 매출이 Google Sheets에 저장됐어요.");
                   setError(null);
                 } catch (saveError) {
                   console.error(saveError);
-                  setError("월 목표 저장에 실패했어요.");
+                  setError("월 목표 저장에 실패했어요. 잠시 후 다시 시도해 주세요.");
                 }
               }}
             />
